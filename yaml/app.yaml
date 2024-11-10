@@ -1,0 +1,40 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: helloworldpy
+  labels:
+    app: helloworldpy
+spec:
+#  type: ClusterIP
+#  type: NodePort
+  type: LoadBalancer  
+  selector:
+    app: helloworldpy
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 5000
+#    nodePort: 30101
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: helloworldpy
+  labels:
+    app: helloworldpy
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: helloworldpy
+  template:
+    metadata:
+      labels:
+        app: helloworldpy
+    spec:
+      containers:
+      - name: helloworldpy
+        image: sin.ocir.io/axmfqftmtydx/github_shyfur-oci-devops/hello_python:${BUILDRUN_HASH}
+        imagePullPolicy: IfNotPresent        
+        ports:
+        - containerPort: 5000
